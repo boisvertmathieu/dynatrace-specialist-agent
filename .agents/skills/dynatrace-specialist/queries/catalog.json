@@ -1,0 +1,8 @@
+{
+  "red": {"signal": "metrics"},
+  "log-errors": {"signal": "logs"},
+  "slow-spans": {"signal": "spans"},
+  "events": {"signal": "events"},
+  "problems": {"signal": "problems"},
+  "metric-discovery": {"signal": "metrics"}
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "dynatrace-for-ai": {
+    "repository": "https://github.com/Dynatrace/dynatrace-for-ai.git",
+    "commit": "4f9aa71f9802aa6db0a4069ae5619eb3392ff411",
+    "license": "Apache-2.0",
+    "skills": ["dt-dql-essentials", "dt-obs-services", "dt-obs-logs", "dt-obs-tracing", "dt-obs-problems", "dt-obs-hosts", "dt-obs-kubernetes", "dt-obs-frontends", "dt-migration"]
+  },
+  "dtctl": {
+    "repository": "https://github.com/dynatrace-oss/dtctl.git",
+    "commit": "63aed8ea8b03b11cf0dc3034aa2c78019ca8a8c2",
+    "tested_cli_version": "0.40.0",
+    "license": "Apache-2.0",
+    "skills": ["dtctl"]
+  }
+}

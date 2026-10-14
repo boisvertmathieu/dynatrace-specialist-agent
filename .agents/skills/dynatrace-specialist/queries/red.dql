@@ -1,0 +1,7 @@
+timeseries {
+  requests = sum(@@REQUEST_COUNT@@),
+  failures = sum(@@FAILURE_COUNT@@),
+  p95_us = percentile(@@RESPONSE_TIME@@, 95)
+}, by: {@@DIMENSION@@}, filter: {@@FILTER@@}, interval: @@INTERVAL@@
+| fieldsAdd requests_total = arraySum(requests), failures_total = arraySum(failures)
+| fieldsAdd error_rate_pct = if(requests_total > 0, failures_total * 100.0 / requests_total, else: null)

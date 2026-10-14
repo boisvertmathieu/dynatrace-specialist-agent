@@ -1,0 +1,5 @@
+metrics
+| filter @@FILTER@@
+| fields metric.key
+| dedup metric.key
+| limit 100

@@ -1,0 +1,6 @@
+{
+  "name": "dynatrace-specialist",
+  "version": "1.0.0",
+  "description": "Investigations Dynatrace en lecture seule, corrélation des signaux et analyses DQL multi-services.",
+  "skills": "./.agents/skills/"
+}

@@ -1,0 +1,6 @@
+fetch spans
+| filter @@FILTER@@
+| filter request.is_root_span == true
+| fields start_time, trace.id, span.id, endpoint.name, duration, request.is_failed
+| sort duration desc
+| limit 20

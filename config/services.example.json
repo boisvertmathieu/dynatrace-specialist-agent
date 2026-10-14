@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "contexts": {
+    "production": {"dtctl_context": "prod-readonly"},
+    "staging": {"dtctl_context": "staging-readonly"}
+  },
+  "limits": {
+    "scan_gbytes": 1,
+    "records": 500,
+    "result_bytes": 2000000,
+    "timeout_seconds": 60,
+    "max_window_hours": 24,
+    "query_budget": 20
+  },
+  "services": {
+    "checkout-prod": {
+      "context": "production",
+      "aliases": ["checkout", "paiement"],
+      "interval": "1m",
+      "selectors": {
+        "metrics": [{"field": "dt.service.name", "value": "checkout-api"}],
+        "spans": [{"field": "dt.service.name", "value": "checkout-api"}],
+        "logs": [{"field": "service.name", "value": "checkout-api"}]
+      },
+      "metrics": {
+        "response_time": "dt.service.request.response_time",
+        "request_count": "dt.service.request.count",
+        "failure_count": "dt.service.request.failure_count"
+      }
+    },
+    "catalog-prod": {
+      "context": "production",
+      "aliases": ["catalogue"],
+      "interval": "1m",
+      "selectors": {
+        "metrics": [{"field": "dt.service.name", "value": "catalog-api"}],
+        "spans": [{"field": "dt.service.name", "value": "catalog-api"}]
+      }
+    },
+    "checkout-staging": {
+      "context": "staging",
+      "aliases": ["checkout preprod"],
+      "selectors": {
+        "metrics": [{"field": "dt.service.name", "value": "checkout-api"}],
+        "spans": [{"field": "dt.service.name", "value": "checkout-api"}]
+      }
+    }
+  }
+}

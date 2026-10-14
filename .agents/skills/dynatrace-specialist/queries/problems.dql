@@ -1,0 +1,7 @@
+fetch dt.davis.problems
+| filter not(dt.davis.is_duplicate)
+| filter @@FILTER@@
+| fields event.start, event.end, display_id, event.name, event.status, event.category,
+    root_cause_entity_id, root_cause_entity_name, dt.davis.event_ids
+| sort event.start asc
+| limit 100

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Spécialiste Dynatrace"
+  short_description: "Incidents, corrélations et métriques Dynatrace avec DQL"
+  default_prompt: "Utilise $dynatrace-specialist pour investiguer mon service et étayer tes conclusions avec les données Dynatrace."
+policy:
+  allow_implicit_invocation: true

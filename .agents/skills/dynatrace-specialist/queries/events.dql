@@ -1,0 +1,5 @@
+fetch events
+| filter @@FILTER@@
+| fields timestamp, event.start, event.end, event.id, event.kind, event.name, event.type
+| sort timestamp asc
+| limit 100

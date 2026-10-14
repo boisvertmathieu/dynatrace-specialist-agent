@@ -1,0 +1,4 @@
+fetch logs
+| filter @@FILTER@@
+| filter in(loglevel, array("ERROR", "FATAL", "SEVERE"))
+| summarize occurrences = count(), by: {loglevel}
