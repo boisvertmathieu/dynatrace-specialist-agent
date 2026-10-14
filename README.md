@@ -4,7 +4,7 @@ Un spécialiste réutilisable pour investiguer les performances, la disponibilit
 et la stabilité de plusieurs services Dynatrace, ou extraire et comparer des
 métriques en langage naturel.
 
-Il combine un **skill d'agent**, les connaissances officielles
+Il combine un **skill d'agent compatible Codex et Copilot CLI**, les connaissances officielles
 [dynatrace-for-ai](https://github.com/Dynatrace/dynatrace-for-ai) et un
 **outil de collecte réellement exécutable via [dtctl](https://github.com/dynatrace-oss/dtctl)**.
 L'agent choisit et poursuit les investigations, corrèle métriques/logs/traces/événements,
@@ -21,7 +21,7 @@ et produit des conclusions associées à des preuves.
 - « Analyse la disponibilité de mon API hier entre 14 h et 16 h, heure de Toronto. »
 - « Extrais le p95 par endpoint et les traces qui expliquent la régression. »
 - « Compare le nombre de requêtes avant et après le déploiement ; donne les DQL et les preuves. »
-- « Investigues les redémarrages et erreurs mémoire de ce service Kubernetes. »
+- « Investigue les redémarrages et erreurs mémoire de ce service Kubernetes. »
 
 L'agent sépare faits mesurés, causes probables et inconnues. Une corrélation
 temporelle ou une suggestion Davis ne devient pas automatiquement une cause confirmée.
@@ -105,6 +105,51 @@ lecture globale de repli. Exemples à adapter après vérification :
 
 Donner à l'agent le chemin du catalogue et celui de la configuration dtctl, puis
 lui poser vos questions. Aucun tenant ni identifiant secret n'est inclus dans ce dépôt.
+
+## Utilisation dans Copilot CLI
+
+Copilot CLI découvre les skills du dépôt dans .agents/skills. Le dépôt fournit
+aussi [un profil natif](.github/agents/dynatrace-specialist.agent.md), sélectionnable
+via /agent. Il charge les mêmes instructions et utilise les mêmes helpers.
+Le manifeste .codex-plugin et agents/openai.yaml concernent Codex ; ils ne sont
+pas nécessaires à Copilot.
+
+Après installation des prérequis et des skills, démarrer Copilot dans le dépôt :
+
+    copilot
+
+Dans une session interactive :
+
+    /skills reload
+    /skills info dynatrace-specialist
+
+Puis sélectionner **dynatrace-specialist** dans /agent et demander, par exemple :
+
+    Investigue checkout-prod sur la dernière heure. Mon catalogue est config/services.local.json et ma configuration dtctl est C:/chemin/prive/dtctl.yaml.
+
+Le skill peut aussi être invoqué directement dans un prompt :
+
+    Utilise /dynatrace-specialist pour comparer les taux d'erreur avant et après le déploiement.
+
+La syntaxe /dynatrace-specialist est celle des skills dans Copilot ; le préfixe
+$dynatrace-specialist montré plus haut s'applique à Codex.
+Pour une utilisation dans tous vos projets :
+
+    python tools/install_skills.py --destination "~/.copilot/skills"
+
+Le profil natif peut être copié séparément dans ~/.copilot/agents si souhaité.
+Redémarrer Copilot pour découvrir un nouveau profil d'agent. Le profil sait
+chercher le skill dans une installation personnelle ou dans le dépôt.
+Les validations de commandes proposées par Copilot restent applicables ;
+aucune préautorisation globale du shell n'est fournie par le skill.
+
+Compatibilité vérifiée avec les formats documentés par GitHub et les tests de
+l'outillage. Une session réelle Copilot CLI n'a pas été exécutée sur cette machine,
+où le CLI n'est pas installé.
+
+Sources : [skills Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills),
+[profils d'agents CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli),
+[configuration et alias d'outils](https://docs.github.com/en/copilot/reference/custom-agents-configuration).
 
 ## Outil de collecte
 
