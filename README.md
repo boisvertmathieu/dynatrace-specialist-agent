@@ -35,9 +35,25 @@ capacités ; leurs changements de schéma restent à vérifier.
 
 ### 1. Récupérer l'agent et les skills officiels
 
+Choisir une des méthodes ci-dessous. L'installation complète par le script fournit
+le spécialiste et les skills officiels aux commits fixés ; les installations
+directes d'un skill fournissent son dossier, ses références et ses helpers.
+Dans tous les cas, installer dtctl et configurer vos accès comme indiqué à l'étape 2.
+
+#### Option A — Git + installation complète
+
     git clone https://github.com/boisvertmathieu/dynatrace-specialist-agent.git
     cd dynatrace-specialist-agent
     python tools/install_skills.py
+
+#### Option B — GitHub CLI : cloner le dépôt complet avec gh
+
+    gh repo clone boisvertmathieu/dynatrace-specialist-agent
+    cd dynatrace-specialist-agent
+    python tools/install_skills.py
+
+Les options A et B conservent aussi le profil Copilot CLI, le catalogue exemple,
+les outils d'installation et les tests.
 
 L'installateur ajoute les skills officiels sélectionnés à .agents/skills, depuis
 les commits exacts d'upstream.lock.json, et conserve leurs licences. Il refuse de
@@ -49,18 +65,123 @@ Ouvrir ce dépôt comme projet Codex : AGENTS.md oriente les demandes Dynatrace
 vers le spécialiste. Le skill est aussi distribuable par le manifeste
 .codex-plugin/plugin.json.
 
-Pour utiliser le spécialiste depuis d'autres projets, copier les skills dans
-le répertoire de skills utilisateur de votre agent :
+#### Option C — Installer les skills du dépôt dans un autre projet ou pour l'utilisateur
 
-    python tools/install_skills.py --destination /chemin/vers/les/skills/utilisateur
+Depuis le dépôt cloné, choisir **une** destination :
 
-Sous Windows, donner un chemin entre guillemets. Pour Codex, utiliser le
-répertoire de skills utilisateur configuré dans votre installation (souvent
-$CODEX_HOME/skills ou ~/.codex/skills). Un projet compatible peut utiliser
-.agents/skills. Démarrer une nouvelle session si la découverte n'est pas actualisée.
-Pour installer seulement ce spécialiste sans réseau :
+| Destination | Commande |
+| --- | --- |
+| Projet courant, spécialiste + skills officiels | python tools/install_skills.py |
+| Un autre projet | python tools/install_skills.py --destination "/chemin/autre-projet/.agents/skills" |
+| Copilot CLI, tous vos projets | python tools/install_skills.py --destination "~/.copilot/skills" |
+| Répertoire utilisateur partagé compatible Agent Skills | python tools/install_skills.py --destination "~/.agents/skills" |
+| Répertoire personnalisé | python tools/install_skills.py --destination "/chemin/vers/les/skills/utilisateur" |
 
-    python tools/install_skills.py --specialist-only --destination /chemin/cible
+Sous Windows, les chemins entre guillemets peuvent utiliser des slashs ; Python
+résout le préfixe ~ vers votre répertoire utilisateur. Choisir le répertoire de
+skills reconnu/configuré dans votre agent. Démarrer une nouvelle session si la
+découverte n'est pas actualisée.
+
+#### Option D — Installer seulement le spécialiste, sans téléchargement amont
+
+Depuis une copie locale du dépôt :
+
+    python tools/install_skills.py --specialist-only --destination "/chemin/cible"
+
+Le script ne contacte pas les dépôts amont dans ce mode. Dans ce dépôt lui-même,
+le spécialiste est déjà en place ; cette option est surtout utile pour une autre
+destination. Les connaissances officielles pourront être ajoutées séparément.
+
+#### Option E — Installation directe du skill avec gh skill install
+
+Utiliser une version de [GitHub CLI proposant gh skill](https://cli.github.com/manual/gh_skill_install).
+Vérifier la commande avec :
+
+    gh --version
+    gh skill install --help
+
+Si gh demande une connexion GitHub, effectuer gh auth login.
+Choisir **une** commande selon la portée souhaitée :
+
+**Copilot CLI — utilisateur, disponible dans tous les projets :**
+
+    gh skill install boisvertmathieu/dynatrace-specialist-agent dynatrace-specialist --allow-hidden-dirs --agent github-copilot --scope user
+
+**Copilot CLI — projet, à exécuter depuis votre dépôt applicatif :**
+
+    gh skill install boisvertmathieu/dynatrace-specialist-agent dynatrace-specialist --allow-hidden-dirs --agent github-copilot --scope project
+
+**Codex — utilisateur :**
+
+    gh skill install boisvertmathieu/dynatrace-specialist-agent dynatrace-specialist --allow-hidden-dirs --agent codex --scope user
+
+**Codex — projet, à exécuter depuis votre dépôt applicatif :**
+
+    gh skill install boisvertmathieu/dynatrace-specialist-agent dynatrace-specialist --allow-hidden-dirs --agent codex --scope project
+
+Le nom dynatrace-specialist cible ce skill ; --allow-hidden-dirs prend en compte son
+emplacement sous .agents. gh choisit le répertoire approprié pour --agent/--scope.
+À portée projet, Copilot et Codex partagent .agents/skills : une installation
+suffit si vous utilisez les deux dans le même projet.
+
+Pour fixer une version plutôt que suivre la version résolue par gh, ajouter
+--pin avec un commit ou tag existant. Exemple sur le commit publié du profil Copilot :
+
+    gh skill install boisvertmathieu/dynatrace-specialist-agent dynatrace-specialist --allow-hidden-dirs --agent github-copilot --scope user --pin b8882b0af14007061d61a83402705c545db58ea1
+
+Depuis un clone local, gh peut également copier le skill sans téléchargement du dépôt :
+
+    gh skill install . dynatrace-specialist --from-local --allow-hidden-dirs --agent github-copilot --scope user
+
+Ces commandes installent le **skill**, pas le profil .agent.md, le catalogue de
+services ni le binaire dtctl. Elles ne lancent pas tools/install_skills.py et
+n'installent pas automatiquement les skills amont. Pour l'ensemble amont fixé,
+utiliser l'option A/B/C ; ou ajouter individuellement les skills nécessaires.
+Exemples avec les commits d'upstream.lock.json :
+
+    gh skill install Dynatrace/dynatrace-for-ai dt-dql-essentials --agent github-copilot --scope user --pin 4f9aa71f9802aa6db0a4069ae5619eb3392ff411
+    gh skill install dynatrace-oss/dtctl dtctl --agent github-copilot --scope user --pin 63aed8ea8b03b11cf0dc3034aa2c78019ca8a8c2
+
+Les autres skills d'observabilité sélectionnés figurent dans upstream.lock.json.
+Remplacer --agent github-copilot par --agent codex pour cibler Codex.
+
+#### Option F — Ajouter le dossier du skill depuis Copilot CLI
+
+Après clonage, depuis la racine du dépôt :
+
+    copilot skill add .agents/skills/dynatrace-specialist
+
+Ou, dans une session interactive :
+
+    /skills add .agents/skills/dynatrace-specialist
+    /skills reload
+    /skills info dynatrace-specialist
+
+Copilot découvre déjà ce dossier lorsque la session démarre dans ce dépôt.
+Cette option permet d'ajouter explicitement l'emplacement ; elle n'installe pas
+les dépendances amont ni le profil natif.
+Voir [les commandes de skills Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills).
+
+#### Installer le profil natif Copilot CLI
+
+Le profil est déjà disponible dans .github/agents lorsque vous clonez le dépôt
+complet et lancez Copilot dans ce projet. Pour le rendre disponible dans un autre
+projet, copier .github/agents/dynatrace-specialist.agent.md dans son dossier
+.github/agents. Pour une installation personnelle, depuis le clone :
+
+**Windows / PowerShell :**
+
+    New-Item -ItemType Directory -Force -Path "$env:USERPROFILE/.copilot/agents"
+    Copy-Item ".github/agents/dynatrace-specialist.agent.md" "$env:USERPROFILE/.copilot/agents/dynatrace-specialist.agent.md" -Confirm
+
+**macOS / Linux :**
+
+    mkdir -p ~/.copilot/agents
+    cp -i .github/agents/dynatrace-specialist.agent.md ~/.copilot/agents/dynatrace-specialist.agent.md
+
+Installer aussi le skill en portée utilisateur (option C ou E), puis redémarrer
+Copilot et sélectionner dynatrace-specialist dans /agent. Le profil et le skill
+sont deux éléments complémentaires ; le profil réutilise le skill installé.
 
 ### 2. Installer et connecter dtctl
 
